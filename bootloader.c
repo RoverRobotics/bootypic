@@ -7,8 +7,20 @@
 #error "MAX_PROG_SIZE must be a multiple of _FLASH_ROW"
 #endif
 
+#ifndef intptr_t
+typedef int intptr_t;
+#endif
+
+#ifndef uintptr_t
+typedef unsigned int uintptr_t;
+#endif
+
+extern uintptr_t _CODE_BASE;
+
 /* bootloader starting address (cannot write to addresses between
  * BOOTLOADER_START_ADDRESS and APPLICATION_START_ADDRESS) */
+#define BOOTLOADER_START_ADDRESS _CODE_BASE
+/*
 #if _FLASH_PAGE == 128
 #define BOOTLOADER_START_ADDRESS 0x200
 #elif _FLASH_PAGE == 512
@@ -16,6 +28,7 @@
 #elif _FLASH_PAGE == 1024
 #define BOOTLOADER_START_ADDRESS 0x800
 #endif
+ */
 
 static uint8_t message[RX_BUF_LEN] = {0};
 static uint8_t f16_sum1 = 0, f16_sum2 = 0;
