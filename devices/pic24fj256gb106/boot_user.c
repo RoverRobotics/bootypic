@@ -240,5 +240,5 @@ void writeMax(uint32_t address, uint32_t* progData){
 }
 
 void startApp(uint16_t applicationAddress){
-	asm("goto w0");
+	__asm__("goto w0");
 }

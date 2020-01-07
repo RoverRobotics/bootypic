@@ -22,19 +22,18 @@ target_include_directories(bootypic
   "${FIRMWARE_SRC}"
   )
 
-target_compile_options(bootypic PRIVATE -O1 -ffunction-sections)
+target_compile_options(bootypic PRIVATE -ffunction-sections)
 target_compile_definitions(bootypic PRIVATE BOOTYPIC)
-set(APP_LINKER_SCRIPT "${DEVICE_SRC}/${MCU_NAME_2}_app.gld")
-set(BOOT_LINKER_SCRIPT "${DEVICE_SRC}/${MCU_NAME_2}_boot.gld")
+set(COMBO_LINKER_SCRIPT "${DEVICE_SRC}/${MCU_NAME_2}_combo.gld")
 
 set_target_properties(bootypic
-  PROPERTIES LINK_DEPENDS ${BOOT_LINKER_SCRIPT})
+  PROPERTIES LINK_DEPENDS ${COMBO_LINKER_SCRIPT})
+
 target_link_options(bootypic
   PRIVATE
   "LINKER:--gc-sections"
   "LINKER:--heap=2048"
-  "LINKER:--coresident,--defsym,__SP_init=0x800,--defsym,__SPLIM_init=0x1000,-mreserve=data@0x0:0x1000"
-  "LINKER:--script=${BOOT_LINKER_SCRIPT},-Map=${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_PROPERTY:NAME>.map,--no-isr,--save-gld,-D__DEFINE_RESET"
+  "LINKER:--script=${COMBO_LINKER_SCRIPT},-Map=${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_PROPERTY:NAME>.map,--no-isr,--save-gld,-D__DEFINE_RESET,-D_LINK_BOOT"
   )
 # $<TARGET_LINKER_FILE:myLib>
 #file(GENERATE OUTPUT filename CONTENT "$<TARGET_LINKER_FILE:bootypic>")
