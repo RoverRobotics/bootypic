@@ -1,11 +1,8 @@
 cmake_minimum_required(VERSION 3.12)
 project(bootypic VERSION 1.9.3 LANGUAGES C)
 
-STRING(TOLOWER "pic${CMAKE_SYSTEM_PROCESSOR}" MCU_NAME)
-STRING(TOLOWER "p${CMAKE_SYSTEM_PROCESSOR}" MCU_NAME_2)
-
-set(DEVICE_SRC "${CMAKE_CURRENT_SOURCE_DIR}/devices/${MCU_NAME}")
-set(FIRMWARE_SRC  "${CMAKE_CURRENT_SOURCE_DIR}/../Power_Board/src")
+set(DEVICE_SRC "${CMAKE_CURRENT_SOURCE_DIR}/devices/${MICROCHIP_CPU_MODEL_NAME}")
+set(FIRMWARE_SRC "${CMAKE_CURRENT_SOURCE_DIR}/../Power_Board/src")
 
 add_executable(bootypic
   bootloader.c
@@ -24,7 +21,7 @@ target_include_directories(bootypic
 
 target_compile_options(bootypic PRIVATE -ffunction-sections)
 target_compile_definitions(bootypic PRIVATE BOOTYPIC)
-set(COMBO_LINKER_SCRIPT "${DEVICE_SRC}/${MCU_NAME_2}_combo.gld")
+set(COMBO_LINKER_SCRIPT "${DEVICE_SRC}/linkerscript.gld")
 
 set_target_properties(bootypic
   PROPERTIES LINK_DEPENDS ${COMBO_LINKER_SCRIPT})
