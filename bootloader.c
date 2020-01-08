@@ -23,9 +23,9 @@ static uint8_t f16_sum1 = 0, f16_sum2 = 0;
 
 int main(void) {
 	if (pre_boot()) {
-		/* initialize the peripherals from the user-supplied initialization functions */
+        initOsc();
+        /* initialize the peripherals from the user-supplied initialization functions */
 		initPins();
-	    initOsc();
 	    initUart();
 	    initTimers();
 		
