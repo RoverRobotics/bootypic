@@ -7,9 +7,8 @@
 #endif
 
 // Defined in linker script
-const extern unsigned long _BOOT_BASE;
-const extern unsigned long _BOOT_LENGTH;
-const extern unsigned long _APP_BASE;
+extern __prog__ void _BOOT_BASE __attribute__((space(prog)));
+extern __prog__ void _APP_BASE __attribute__((space(prog)));
 
 static uint8_t message[RX_BUF_LEN] = {0};
 static uint8_t f16_sum1 = 0, f16_sum2 = 0;
@@ -28,8 +27,8 @@ int main(void) {
 	        receiveBytes();
 	    }
 	}
-    startApp(_APP_BASE);
-    
+	startApp((uint32_t)&_APP_BASE);
+
     return 0;
 }
 
@@ -156,7 +155,7 @@ void processCommand(uint8_t* data){
             break;
             
         case CMD_READ_BOOT_START_ADDR:
-            word = _BOOT_BASE;
+            word = &_BOOT_BASE;
             txArray16bit(cmd, &word, 1);
             break;
             
@@ -165,7 +164,7 @@ void processCommand(uint8_t* data){
             address = from_lendian_uint32(data + 3);
             
             /* do not allow the bootloader to be erased */
-            if((address >= _BOOT_BASE) && (address < _BOOT_BASE + _BOOT_LENGTH))
+            if((address >= &_BOOT_BASE) && (address < &_APP_BASE))
                 break;
             
 			eraseByAddress(address);
@@ -173,7 +172,7 @@ void processCommand(uint8_t* data){
             /* re-initialize the bootloader start address */
             if(address == 0){
                 /* this is the GOTO BOOTLOADER instruction */
-                progData[0] = 0x040000U | _BOOT_BASE;
+                progData[0] = 0x040000U | (uint32_t)&_BOOT_BASE;
                 progData[1] = 0x000000;
                 
                 /* write the data */
@@ -207,7 +206,7 @@ void processCommand(uint8_t* data){
             address = from_lendian_uint32(data + 3);
             
 			/* do not allow the bootloader to be overwritten */
-            if((address >= _BOOT_BASE) && (address < _BOOT_BASE + _BOOT_LENGTH))
+            if((address >= &_BOOT_BASE) && (address < &_APP_BASE))
                 break;
 
             for(i=0; i<_FLASH_ROW; i++){
@@ -225,7 +224,7 @@ void processCommand(uint8_t* data){
 			address = from_lendian_uint32(data + 3);
 
 			/* do not allow the bootloader to be overwritten */
-        if((address >= _BOOT_BASE) && (address < _BOOT_BASE + _BOOT_LENGTH))
+        if((address >= &_BOOT_BASE) && (address < &_APP_BASE))
                 break;
            	
             /* fill the progData array */
@@ -235,7 +234,7 @@ void processCommand(uint8_t* data){
 
 		    /* the zero address should always go to the bootloader */
             if(address == 0){
-	            progData[0] = 0x040000U | _BOOT_BASE;
+	            progData[0] = 0x040000U | (uint32_t)&_BOOT_BASE;
 	            progData[1] = 0x000000;
             }
 
@@ -247,7 +246,7 @@ void processCommand(uint8_t* data){
             
         case CMD_START_APP:
             startApp(APPLICATION_START_ADDRESS);
-            break;
+        break;
             
         default:
         	break;

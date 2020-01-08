@@ -171,7 +171,7 @@ uint16_t fletcher16(uint8_t* data, uint16_t length);
  * @brief starts the application
  * @param applicationAddress
  */
-void startApp(uint16_t applicationAddress);
+void startApp(uint32_t applicationAddress);
 
 /**
  * @brief initializes the oscillator
