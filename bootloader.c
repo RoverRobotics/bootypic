@@ -15,7 +15,7 @@ extern __prog__ void _APP_END  __attribute__((space(prog)));
 bool is_addr_in_boot(uint32_t address){
     uint32_t lo_addr = (uint32_t)&_BOOT_BASE;
     uint32_t hi_addr = (uint32_t)&_BOOT_END;
-    return (lo_addr <= address && address <= hi_addr);
+    return (lo_addr <= address && address < hi_addr);
 }
 
 static uint8_t message[RX_BUF_LEN] = {0};
