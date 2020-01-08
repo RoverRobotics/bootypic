@@ -1,4 +1,4 @@
-#include "xc.h"
+#include <xc.h>
 #include "config.h" 
 #include "bootloader.h"
 
@@ -8,7 +8,15 @@
 
 // Defined in linker script
 extern __prog__ void _BOOT_BASE __attribute__((space(prog)));
+extern __prog__ void _BOOT_END  __attribute__((space(prog)));
 extern __prog__ void _APP_BASE __attribute__((space(prog)));
+extern __prog__ void _APP_END  __attribute__((space(prog)));
+
+bool is_addr_in_boot(uint32_t address){
+    uint32_t lo_addr = (uint32_t)&_BOOT_BASE;
+    uint32_t hi_addr = (uint32_t)&_BOOT_END;
+    return (lo_addr <= address && address <= hi_addr);
+}
 
 static uint8_t message[RX_BUF_LEN] = {0};
 static uint8_t f16_sum1 = 0, f16_sum2 = 0;
@@ -155,7 +163,7 @@ void processCommand(uint8_t* data){
             break;
             
         case CMD_READ_BOOT_START_ADDR:
-            word = &_BOOT_BASE;
+            word = (uint32_t)&_BOOT_BASE;
             txArray16bit(cmd, &word, 1);
             break;
             
@@ -164,7 +172,7 @@ void processCommand(uint8_t* data){
             address = from_lendian_uint32(data + 3);
             
             /* do not allow the bootloader to be erased */
-            if((address >= &_BOOT_BASE) && (address < &_APP_BASE))
+            if(is_addr_in_boot(address))
                 break;
             
 			eraseByAddress(address);
@@ -206,7 +214,7 @@ void processCommand(uint8_t* data){
             address = from_lendian_uint32(data + 3);
             
 			/* do not allow the bootloader to be overwritten */
-            if((address >= &_BOOT_BASE) && (address < &_APP_BASE))
+            if(is_addr_in_boot(address))
                 break;
 
             for(i=0; i<_FLASH_ROW; i++){
@@ -224,7 +232,7 @@ void processCommand(uint8_t* data){
 			address = from_lendian_uint32(data + 3);
 
 			/* do not allow the bootloader to be overwritten */
-        if((address >= &_BOOT_BASE) && (address < &_APP_BASE))
+        if(is_addr_in_boot(address))
                 break;
            	
             /* fill the progData array */

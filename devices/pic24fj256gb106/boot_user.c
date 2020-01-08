@@ -16,7 +16,6 @@ bool pre_boot(){
 
 void initOsc(void){
     CLKDIV = 0;
-    return;
 }
 
 void initPins(void){
@@ -239,6 +238,7 @@ void writeMax(uint32_t address, uint32_t* progData){
 	}
 }
 
-void startApp(uint32_t applicationAddress){
-	__asm__("goto w0");
+void startApp(uint32_t applicationAddress) {
+    __asm__  ("goto w0");
+    __builtin_unreachable();
 }
