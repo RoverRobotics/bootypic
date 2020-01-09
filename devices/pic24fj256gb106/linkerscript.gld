@@ -63,17 +63,6 @@ OPTIONAL(-lfx)
 #define BOOT_LENGTH (APP_ORIGIN - BOOT_ORIGIN)
 #define APP_LENGTH (PROG_ORIGIN + PROG_LENGTH - APP_ORIGIN)
 
-#if _LINK_BOOT
-    #define _ATTRS_BOOT (xr)
-    #define _ATTRS_APP
-    #define TEXT_REGION boot
-#endif
-#if _LINK_APP
-    #define _ATTRS_BOOT
-    #define _ATTRS_APP (xr)
-    #define TEXT_REGION app
-#endif
-
 /*
 ** Memory Regions
 */
@@ -86,9 +75,14 @@ MEMORY
   aivt           : ORIGIN = 0x104,         LENGTH = 0xFC
 
   /* region of the device available for programming */
-  program           : ORIGIN = PROG_ORIGIN, LENGTH = PROG_LENGTH
-  boot  _ATTRS_BOOT : ORIGIN = BOOT_ORIGIN, LENGTH = BOOT_LENGTH
-  app   _ATTRS_APP  : ORIGIN = APP_ORIGIN,  LENGTH = APP_LENGTH
+
+  /* the name of the region is HARDCODED in pic30_elf32.c */
+  #if _LINK_BOOT
+    program (xr) : ORIGIN = BOOT_ORIGIN, LENGTH = BOOT_LENGTH
+  #endif
+  #if _LINK_APP
+    program (xr) : ORIGIN = APP_ORIGIN, LENGTH = APP_LENGTH
+  #endif
 
   CONFIG3        : ORIGIN = 0x2ABFA,       LENGTH = 0x2
   CONFIG2        : ORIGIN = 0x2ABFC,       LENGTH = 0x2
@@ -100,8 +94,15 @@ MEMORY
 __CONFIG3 = 0x2ABFA;
 __CONFIG2 = 0x2ABFC;
 __CONFIG1 = 0x2ABFE;
-__CODE_BASE = 0x200;
-__CODE_LENGTH = 0x2A9F8;
+
+#if _LINK_BOOT
+    __CODE_BASE = BOOT_ORIGIN;
+    __CODE_LENGTH = BOOT_LENGTH;
+#endif
+#if _LINK_APP
+    __CODE_BASE = APP_ORIGIN;
+    __CODE_LENGTH = APP_LENGTH;
+#endif
 
 __DATA_BASE = 0x800;
 __DATA_LENGTH = 0x4000;
@@ -154,7 +155,7 @@ SECTIONS
         KEEP (*(.isr*));
         *(.libc) *(.libm ) *(.libdsp);  /* keep together in this order */
         *(.lib*);
-  } >TEXT_REGION
+  } >program
 
   /*
   ** Configuration Words

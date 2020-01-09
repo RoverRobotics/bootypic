@@ -1,5 +1,5 @@
 /// Device-specific implementation details
-#include "xc.h"
+#include <xc.h>
 #include "boot_user.h"
 #include "power.h"
 

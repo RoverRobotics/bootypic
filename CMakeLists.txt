@@ -31,7 +31,7 @@ set_target_properties(bootypic
 target_link_options(bootypic
   PRIVATE
   "LINKER:-D_LINK_BOOT,--no-isr"
-  "LINKER:--script=${LINKER_SCRIPT},--save-gld,-Map=${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_PROPERTY:NAME>.map,--gc-sections")
+  "LINKER:--script=${LINKER_SCRIPT},--save-gld=${CMAKE_CURRENT_BINARY_DIR}/linkerscript.gld,-Map=${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_PROPERTY:NAME>.map,--gc-sections")
 
 add_custom_command(
   TARGET bootypic POST_BUILD
