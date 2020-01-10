@@ -59,6 +59,7 @@ add_custom_target("MCU_flash_bootypic"
   "-TPPK3" #PicKit3
   "-P${CMAKE_SYSTEM_PROCESSOR}" # part selection (required)
   "-F${CMAKE_CURRENT_BINARY_DIR}/${BOOTYPIC_HEX}" # flash hex file
+  "-M"
   "-K" # print checksum of hex file
   DEPENDS bootypic
   COMMENT "Connecting to PICKit3 to flash bootloader..."
