@@ -29,7 +29,7 @@ set_target_properties(bootypic
   LINK_DEPENDS "${LINKER_SCRIPT}")
 target_link_options(bootypic
   PRIVATE
-  "LINKER:-D_LINK_BOOT,--no-isr"
+  "LINKER:-D_LINK_BOOT,--no-isr,--no-ivt"
   "LINKER:--script=${LINKER_SCRIPT},--save-gld=${CMAKE_CURRENT_BINARY_DIR}/linkerscript.gld,-Map=${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_PROPERTY:NAME>.map,--gc-sections")
 
 set(BOOTYPIC_HEX "bootypic.hex")
