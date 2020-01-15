@@ -4,7 +4,7 @@ project(bootypic VERSION 1.9.3 LANGUAGES C)
 # assumes LINKER_SCRIPT, BOOTYPIC_DEVICE_DIR
 # but making these options breaks the script
 
-set(FIRMWARE_SRC "${CMAKE_CURRENT_SOURCE_DIR}/../Power_Board/src")
+set(FIRMWARE_SRC "${CMAKE_CURRENT_SOURCE_DIR}/../PowerBoard/src")
 
 add_executable(bootypic
   bootloader.c
