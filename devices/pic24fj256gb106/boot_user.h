@@ -38,7 +38,6 @@
  * allow faster programming operations, but will consume more RAM.
  */
 #define MAX_PROG_SIZE 0x80
-#define APPLICATION_START_ADDRESS 0x2000
 #define FCY (16000000UL) /* instruction clock frequency, in Hz */
 
 #define _FLASH_PAGE 512 /* _FLASH_PAGE should be the maximum page (in instructions) */

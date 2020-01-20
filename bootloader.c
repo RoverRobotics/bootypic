@@ -13,8 +13,8 @@ extern __prog__ void _APP_BASE __attribute__((space(prog)));
 extern __prog__ void _APP_END __attribute__((space(prog)));
 
 bool is_addr_in_boot(uint32_t address) {
-    uint32_t lo_addr = (uint32_t)&_BOOT_BASE;
-    uint32_t hi_addr = (uint32_t)&_BOOT_END;
+    uint32_t lo_addr = __builtin_tbladdress(&_BOOT_BASE);
+    uint32_t hi_addr = __builtin_tbladdress(&_BOOT_END);
     return (lo_addr <= address && address < hi_addr);
 }
 
@@ -35,7 +35,7 @@ int main(void) {
             receiveBytes();
         }
     }
-    startApp((uint32_t)&_APP_BASE);
+    startApp();
 
     return 0;
 }
@@ -156,12 +156,12 @@ void processCommand(uint8_t *data) {
         break;
 
     case CMD_READ_APP_START_ADDR:
-        word = APPLICATION_START_ADDRESS;
+        word = __builtin_tbladdress(&_APP_BASE);
         txArray16bit(cmd, &word, 1);
         break;
 
     case CMD_READ_BOOT_START_ADDR:
-        word = (uint32_t)&_BOOT_BASE;
+        word = __builtin_tbladdress(&_BOOT_BASE);
         txArray16bit(cmd, &word, 1);
         break;
 
@@ -251,7 +251,7 @@ void processCommand(uint8_t *data) {
         break;
 
     case CMD_START_APP:
-        startApp(APPLICATION_START_ADDRESS);
+        startApp();
         break;
 
     default:

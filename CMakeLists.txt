@@ -21,16 +21,21 @@ target_include_directories(bootypic
   "${FIRMWARE_SRC}"
   )
 
-target_compile_options(bootypic PRIVATE -ffunction-sections)
-target_compile_definitions(bootypic PRIVATE BOOTYPIC)
+target_compile_options(bootypic PRIVATE -msmall-data)
 
 set_target_properties(bootypic
   PROPERTIES
   LINK_DEPENDS "${LINKER_SCRIPT}")
+
 target_link_options(bootypic
   PRIVATE
-  "LINKER:-D_LINK_BOOT,--no-isr,--no-ivt"
-  "LINKER:--script=${LINKER_SCRIPT},--save-gld=${CMAKE_CURRENT_BINARY_DIR}/linkerscript.gld,-Map=${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_PROPERTY:NAME>.map,--gc-sections")
+  # linker script
+  "LINKER:-D_LINK_BOOT,--script=${LINKER_SCRIPT},--save-gld=${CMAKE_CURRENT_BINARY_DIR}/linkerscript.gld"
+  # don't make interrupts. Bootloader doesn't use them.
+  "LINKER:--no-isr,--no-ivt"
+  # remove unused code, save output for debugging
+  "LINKER:--gc-sections,-Map=${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_PROPERTY:NAME>.map"
+  )
 
 set(BOOTYPIC_HEX "bootypic.hex")
 

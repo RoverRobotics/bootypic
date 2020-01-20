@@ -239,7 +239,11 @@ void writeMax(uint32_t address, uint32_t *progData) {
     }
 }
 
-void startApp(uint16_t applicationAddress) {
-    __asm__("goto %0" : : "r"(applicationAddress));
+// The app entry point is assumed to be at the beginning of its address range, as defined
+// in the linker script. It corresponds to the symbol __resetPRI in the application binary
+extern void __attribute__ ((noload)) _APP_BASE();
+
+void startApp() {
+    _APP_BASE();
     __builtin_unreachable();
 }
