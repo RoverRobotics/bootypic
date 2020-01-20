@@ -239,7 +239,7 @@ void writeMax(uint32_t address, uint32_t *progData) {
     }
 }
 
-void startApp(uint32_t applicationAddress) {
-    __asm__("goto w0");
+void startApp(uint16_t applicationAddress) {
+    __asm__("goto %0" : : "r"(applicationAddress));
     __builtin_unreachable();
 }

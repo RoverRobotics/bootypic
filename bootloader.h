@@ -166,9 +166,10 @@ uint16_t fletcher16(uint8_t *data, uint16_t length);
 
 /**
  * @brief starts the application
- * @param applicationAddress
+ * @param applicationAddress address of the instruction to jump to.
+ * Note the address must be in the first tblpage of program memory (first 32K instructions)
  */
-void startApp(uint32_t applicationAddress);
+void startApp(uint16_t applicationAddress);
 
 /**
  * @brief initializes the oscillator

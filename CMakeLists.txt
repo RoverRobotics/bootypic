@@ -44,13 +44,6 @@ add_custom_command(
 install(FILES "$<TARGET_FILE:bootypic>" DESTINATION "." RENAME "bootypic-${PROJECT_VERSION}.elf")
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${BOOTYPIC_HEX}" DESTINATION "." RENAME "bootypic-${PROJECT_VERSION}.hex")
 
-set(MPLABX_VER v5.30)
-if(CMAKE_HOST_SYSTEM_NAME STREQUAL Windows)
-  set(MPLABX_ROOT "C:/Program Files (x86)/Microchip/MPLABX/${MPLABX_VER}")
-else()
-  set(MPLABX_ROOT "/opt/microchip/mplabx/${MPLABX_VER}")
-endif()
-
 #build target to flash an attached file with the bootloader
 find_package(MPLABX)
 
