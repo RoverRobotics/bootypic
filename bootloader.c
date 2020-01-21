@@ -1,6 +1,6 @@
-#include "xc.h"
-#include "config.h" 
 #include "bootloader.h"
+#include "config.h"
+#include <xc.h>
 
 
 #if MAX_PROG_SIZE % _FLASH_ROW != 0
@@ -9,23 +9,20 @@
 
 /* bootloader starting address (cannot write to addresses between
  * BOOTLOADER_START_ADDRESS and APPLICATION_START_ADDRESS) */
-#if _FLASH_PAGE == 128
-#define BOOTLOADER_START_ADDRESS 0x200
-#elif _FLASH_PAGE == 512
-#define BOOTLOADER_START_ADDRESS 0x400
-#elif _FLASH_PAGE == 1024
-#define BOOTLOADER_START_ADDRESS 0x800
-#endif
+extern __prog__ void _CODE_BASE __attribute__((space(prog)));
+
+#define BOOTLOADER_START_ADDRESS (__builtin_tbladdress(&_CODE_BASE))
+
 
 static uint8_t message[RX_BUF_LEN] = {0};
 static uint8_t f16_sum1 = 0, f16_sum2 = 0;
 
 int main(void) {
-	if (pre_boot()) {
-		/* initialize the peripherals from the user-supplied initialization functions */
-		initPins();
-	    initOsc();
-	    initUart();
+    if (pre_boot()) {
+        initOsc();
+        /* initialize the peripherals from the user-supplied initialization functions */
+        initPins();
+        initUart();
 	    initTimers();
 		
 	    /* wait until something is received on the serial port */
@@ -34,8 +31,8 @@ int main(void) {
 	        receiveBytes();
 	    }
 	}
-    startApp(APPLICATION_START_ADDRESS);
-    
+    startApp();
+
     return 0;
 }
 

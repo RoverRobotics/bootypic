@@ -1,7 +1,7 @@
 /// Device-specific implementation details
-#include "xc.h"
 #include "boot_user.h"
 #include "power.h"
+#include <xc.h>
 
 bool pre_boot(){
 	power_init();
@@ -164,8 +164,8 @@ bool tryRxByte(uint8_t *outbyte){
 /// Device-specific implementations of bootloader operations
 void eraseByAddress(uint32_t address){
 	uint16_t offset;
-	uint16_t tempTblPag = TBLPAG;
-	TBLPAG = (uint16_t)((address & 0x00ff0000) >> 16); // initialize PM Page Boundary
+    uint8_t tempTblPag = TBLPAG;
+    TBLPAG = (uint8_t)((address & 0x00ff0000) >> 16); // initialize PM Page Boundary
 	offset = (uint16_t)((address & 0x0000ffff) >> 0);
 	NVMCON = 0x4042; // page erase operation
 	__builtin_tblwtl(offset, 0);
@@ -177,10 +177,10 @@ void eraseByAddress(uint32_t address){
 
 uint32_t readAddress(uint32_t address){
     uint16_t offset;
-    uint16_t tempTblPag = TBLPAG;
+    uint8_t tempTblPag = TBLPAG;
 	uint32_t result = 0;
-    //Set up pointer to the first memory location to be written
-    TBLPAG = (uint16_t)((address & 0x00ff0000) >> 16); // initialize PM Page Boundary
+    // Set up pointer to the first memory location to be written
+    TBLPAG = (uint8_t)((address & 0x00ff0000) >> 16); // initialize PM Page Boundary
     offset = (uint16_t)((address & 0x0000ffff) >> 0);  // initialize lower word of address
     
 	result |= (((uint32_t)__builtin_tblrdh(offset)) << 16);// read from address high word
@@ -191,10 +191,10 @@ uint32_t readAddress(uint32_t address){
 }
 
 void writeInstr(uint32_t address, uint32_t instruction){
-	uint16_t tempTblPag = TBLPAG; 
+    uint8_t tempTblPag = TBLPAG;
 
 	uint16_t offset = (uint16_t)(address & 0x0000ffff);
-	TBLPAG = (uint16_t)((address & 0xffff0000) >> 16); /* initialize PM Page Boundary */
+    TBLPAG = (uint8_t)((address & 0x00ff0000) >> 16); /* initialize PM Page Boundary */
 
 	NVMCON = 0x4003; // Memory word program operation
 	
@@ -210,9 +210,9 @@ void writeRow(uint32_t address, uint32_t* words){
 
 	// see "Row Programming in C with Built-in Functions (Unmapped Latches)"
 	uint16_t i;
-	uint16_t tempTblPag = TBLPAG; 
+    uint8_t tempTblPag = TBLPAG;
 	uint16_t offset = (uint16_t)(address & 0x0000ff80);
-	TBLPAG = (uint16_t)((address & 0x00ff0000) >> 16); /* initialize PM Page Boundary */
+    TBLPAG = (uint8_t)((address & 0x00ff0000) >> 16); /* initialize PM Page Boundary */
 
 	NVMCON = 0x4001; // Memory row program operation
 	for (i=0; i<_FLASH_ROW; i++){
@@ -239,6 +239,15 @@ void writeMax(uint32_t address, uint32_t* progData){
 	}
 }
 
-void startApp(uint16_t applicationAddress){
-	asm("goto w0");
+// The app entry point is assumed to be at the beginning of its address range, as defined
+// in the linker script. It corresponds to the symbol __resetPRI in the application binary
+void __attribute__ ((noload, address(APPLICATION_START_ADDRESS))) APPLICATION_ENTRY_POINT()
+{
+    // implemented in app
+    __builtin_unreachable();
+}
+
+void startApp() {
+    APPLICATION_ENTRY_POINT();
+    __builtin_unreachable();
 }
