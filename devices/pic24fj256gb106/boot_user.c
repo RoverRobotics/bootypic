@@ -241,13 +241,14 @@ void writeMax(uint32_t address, uint32_t* progData){
 
 // The app entry point is assumed to be at the beginning of its address range, as defined
 // in the linker script. It corresponds to the symbol __resetPRI in the application binary
-void __attribute__ ((noload, address(APPLICATION_START_ADDRESS))) APPLICATION_ENTRY_POINT()
-{
-    // implemented in app
-    __builtin_unreachable();
-}
+static void __attribute__ (( address(APPLICATION_START_ADDRESS), noload)) APPLICATION_ENTRY_POINT() {
+    // execution should never get here. If the debugger says execution is here, it is lying.
+    __asm__ volatile ("");
+    __builtin_nop();
+};
 
 void startApp() {
+    //     ((void (*)())APPLICATION_START_ADDRESS)();
     APPLICATION_ENTRY_POINT();
     __builtin_unreachable();
 }

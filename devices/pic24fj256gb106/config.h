@@ -6,7 +6,6 @@
 #pragma config JTAGEN = OFF
 #pragma config GCP = OFF
 #pragma config GWRP = OFF
-#pragma config FWDTEN = ON
 #pragma config ICS = PGx2
 #pragma config WDTPS = PS128
 #pragma config IESO = OFF

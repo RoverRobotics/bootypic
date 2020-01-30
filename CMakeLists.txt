@@ -45,22 +45,37 @@ add_custom_command(
   POST_BUILD
   COMMAND "${XC16_bin2hex_EXECUTABLE}" "$<TARGET_FILE:bootypic>"
   BYPRODUCTS "${BOOTYPIC_HEX}"
-) # todo: regularize this file with hexmate
+)
 
 install(FILES "$<TARGET_FILE:bootypic>" DESTINATION "." RENAME "bootypic-${PROJECT_VERSION}.elf")
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${BOOTYPIC_HEX}" DESTINATION "." RENAME "bootypic-${PROJECT_VERSION}.hex")
 
 #build target to flash an attached file with the bootloader
-find_package(MPLABX)
+#find_package(MPLABX)
 
-add_custom_target("MCU_flash_bootypic"
-  COMMAND "${MPLABX_ipecmd_EXECUTABLE}"
-  "-TPPK3" #PicKit3
-  "-P${CMAKE_SYSTEM_PROCESSOR}" # part selection (required)
-  "-F${CMAKE_CURRENT_BINARY_DIR}/${BOOTYPIC_HEX}" # flash hex file
-  "-M"
-  "-K" # print checksum of hex file
-  DEPENDS bootypic
-  COMMENT "Connecting to PICKit3 to flash bootloader..."
-  USES_TERMINAL
-)
+#add_custom_target("MCU_flash_bootypic"
+#  COMMAND "${MPLABX_ipecmd_EXECUTABLE}"
+#  "-TPPK3" #PicKit3
+#  "-P${CMAKE_SYSTEM_PROCESSOR}" # part selection (required)
+#  "-F${CMAKE_CURRENT_BINARY_DIR}/${BOOTYPIC_HEX}" # flash hex file
+#  "-M"
+#  "-K" # print checksum of hex file
+#  DEPENDS bootypic
+#  COMMENT "Connecting to PICKit3 to flash bootloader..."
+#  USES_TERMINAL
+#)
+
+
+# export(TARGETS MCU_flash_bootypic FILE flash_bootypic.cmake)
+#install(CODE "
+#  find_package(MPLABX)
+#  string(TIMESTAMP backup_file \"memory-%H-%M-%S\")
+#  MPLABX_ipe(
+#    TOOL PICKIT3
+#    PART 24FJ256GB106
+#    READ  \"${CMAKE_CURRENT_BINARY_DIR}/${backup_file}\"
+#    WRITE \"${CMAKE_CURRENT_BINARY_DIR}/${BOOTYPIC_HEX}\" # flash hex file
+#    RELEASE_RESET
+#  )
+#  ")
+#
