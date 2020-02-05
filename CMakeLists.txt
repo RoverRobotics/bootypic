@@ -35,7 +35,7 @@ target_link_options(bootypic
   # don't make interrupts. Bootloader doesn't use them.
   "LINKER:--no-isr,--no-ivt"
   # remove unused code, save output for debugging
-  "LINKER:--gc-sections,-Map=${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_PROPERTY:NAME>.map"
+  "LINKER:-Map=${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_PROPERTY:NAME>.map"
   )
 
 set(BOOTYPIC_HEX "bootypic.hex")
