@@ -239,15 +239,28 @@ void writeMax(uint32_t address, uint32_t* progData){
 	}
 }
 
+
+// PIC24F doesn't have a "goto 24-bit address" instruction. There are two approaches:
+// 1. Define a function at the application start entry point and call it
+// 2. Modify the current function return address and "return" to it.
+//
+// The latter is slightly more flexible since the address may be decided at runtime.
+
+/*
 // The app entry point is assumed to be at the beginning of its address range, as defined
 // in the linker script. It corresponds to the symbol __resetPRI in the application binary
-void __attribute__ ((noload, address(APPLICATION_START_ADDRESS))) APPLICATION_ENTRY_POINT()
+void __attribute__ ((address(APPLICATION_START_ADDRESS))) APPLICATION_ENTRY_POINT()
 {
     // implemented in app
-    __builtin_unreachable();
+	__builtin_nop();
 }
 
-void startApp() {
-    APPLICATION_ENTRY_POINT();
-    __builtin_unreachable();
+void startApp(){ APPLICATION_ENTRY_POINT(); __builtin_unreachable(); }
+*/
+
+void startApp(){
+	// set the return address.
+	 __asm__ volatile ("push.d %0; return"::"r"(APPLICATION_START_ADDRESS));
+	// "return" to the specified address.
+	 __asm__ volatile ("return");
 }
