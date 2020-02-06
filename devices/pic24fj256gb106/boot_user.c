@@ -259,8 +259,6 @@ void startApp(){ APPLICATION_ENTRY_POINT(); __builtin_unreachable(); }
 */
 
 void startApp(){
-	// set the return address.
-	 __asm__ volatile ("push.d %0; return"::"r"(APPLICATION_START_ADDRESS));
-	// "return" to the specified address.
-	 __asm__ volatile ("return");
+	// set the return address and "return" to the specified address.
+	 __asm__ volatile ("push.d %0 \n return"::"r"((uint32_t)APPLICATION_START_ADDRESS));
 }
